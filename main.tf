@@ -1,8 +1,14 @@
-resource "aws_instance" "example" {
-  ami = "ami-xxxxxxxxxxxxxx"
-  instance_type = "t3.micro"
+data "aws_iam_policy_document" "allow_describe_regions" {
+  statement {
+    effect = "Allow"
+    actions = ["ec2:DescribeRegions"]
+    resources = ["*"]
+  }
 }
 
-output "example_instance_id" {
-  value = aws_instance.example.id
+module "describe_regions_for_ec2" {
+  source = "./iam-role"
+  name = "describe-regions-for-ec2"
+  identifier = "ec2.amazonaws.com"
+  policy = data.aws_iam_policy_document.allow_describe_regions.json
 }
